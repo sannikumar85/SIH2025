@@ -33,10 +33,24 @@ const app = express();
 app.use(helmet());
 
 // CORS configuration
+// CORS configuration
+const allowedOrigins = [
+  "https://financial-literacy-app-seven-mocha.vercel.app",  // Your Vercel frontend
+  "http://localhost:5173"                                   // Dev frontend
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://financial-literacy-app-seven-mocha.vercel.app',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("❌ Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
 
 // Body parser
 app.use(express.json({ limit: '10mb' }));

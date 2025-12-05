@@ -48,6 +48,12 @@ const Chat = () => {
 
     try {
       // Call the chat API with conversation history for better context
+      console.log('Sending message to API:', {
+        message: inputMessage.trim(),
+        language: currentLanguage,
+        userId: 'guest'
+      })
+
       const response = await chatAPI.sendMessage({
         message: inputMessage.trim(),
         language: currentLanguage,
@@ -58,22 +64,39 @@ const Chat = () => {
         }))
       })
 
-      const botMessage = {
-        id: Date.now() + 1,
-        type: 'bot',
-        content: response.data.response,
-        timestamp: new Date()
-      }
+      console.log('API Response:', response)
 
-      setMessages(prev => [...prev, botMessage])
+      // Check if response has the expected structure
+      if (response && response.data && response.data.response) {
+        const botMessage = {
+          id: Date.now() + 1,
+          type: 'bot',
+          content: response.data.response,
+          timestamp: new Date()
+        }
+        setMessages(prev => [...prev, botMessage])
+      } else {
+        throw new Error('Invalid response structure from API')
+      }
     } catch (error) {
-      console.error('Chat error:', error)
+      console.error('Chat error details:', error)
+      console.error('Error response:', error.response?.data)
+      
+      let errorText = currentLanguage === 'hi'
+        ? 'माफ करें, कुछ गलत हो गया। कृपया फिर से कोशिश करें।'
+        : 'Sorry, something went wrong. Please try again.'
+      
+      // Show more specific error if available
+      if (error.response?.data?.message) {
+        errorText = error.response.data.message
+      } else if (error.message) {
+        errorText = error.message
+      }
+      
       const errorMessage = {
         id: Date.now() + 1,
         type: 'bot',
-        content: currentLanguage === 'hi'
-          ? 'माफ करें, कुछ गलत हो गया। कृपया फिर से कोशिश करें।'
-          : 'Sorry, something went wrong. Please try again.',
+        content: errorText,
         timestamp: new Date(),
         isError: true
       }

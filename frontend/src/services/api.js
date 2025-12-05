@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 // Create axios instance
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api/v1',
-  timeout: 10000,
+  timeout: 60000, // Increased to 60 seconds for AI responses
   headers: {
     'Content-Type': 'application/json',
   },
@@ -27,9 +27,14 @@ api.interceptors.request.use(
 // Response interceptor
 api.interceptors.response.use(
   (response) => {
+    // Log successful responses for debugging
+    console.log('API Response:', response)
     return response.data
   },
   (error) => {
+    console.error('API Error:', error)
+    console.error('API Error Response:', error.response)
+    
     const message = error.response?.data?.message || error.message || 'An error occurred'
     
     // Handle specific error codes

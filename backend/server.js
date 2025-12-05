@@ -35,7 +35,8 @@ app.use(helmet());
 // CORS configuration
 // CORS configuration
 const allowedOrigins = [
-  "https://financial-literacy-app-seven-mocha.vercel.app",  // Your Vercel frontend
+  "https://financial-literacy-app-seven-mocha.vercel.app",  // Your Vercel frontend (old)
+  "https://sih-2025-sanni-kumars-projects.vercel.app",      // Your Vercel frontend (current)
   "http://localhost:5173"                                   // Dev frontend
 ];
 
